@@ -130,7 +130,8 @@ bun db:seed:users
 
 ## Diagramme MongoDB
 
-*Texte alternatif*
+![chatbot_simple_diagram](https://github.com/user-attachments/assets/39894776-b56c-408d-b67f-13f4cc04a9bb)
+
 
 ## Structure Frontend
 
