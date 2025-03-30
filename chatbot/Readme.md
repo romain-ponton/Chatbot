@@ -1,52 +1,99 @@
-Documentation technique pour l'application Chabotsio
+Voici une version révisée et formatée de votre documentation technique pour l'application Chabotsio, prête à être intégrée dans un fichier `README.md` :
 
-Introduction
+---
 
-Chabotsio est une application web de chatbot qui peut être exécutée localement sur votre machine. Elle utilise des modèles de langage fournis par Ollama pour générer des réponses. L'application est construite avec Express et Bun pour le backend, Vue.js pour le frontend et MongoDB comme base de données.
+# Documentation Technique pour l'Application Chabotsio
 
-Prérequis
+## Introduction
+
+Chabotsio est une application web de chatbot qui peut être exécutée localement sur votre machine. Elle utilise des modèles de langage fournis par Ollama pour générer des réponses. L'application est construite avec Express et Bun pour le backend, Vue.js pour le frontend, et MongoDB comme base de données.
+
+## Prérequis
 
 Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
 
-Node.js (Version LTS récente)
-Chignon
-MongoDB (BDD)
-Ollama (pour les modèles de langage)
-Installation frontale
-    git clone <url_depot> nom_dossier
-    cd nom_dossier
-    bun install
-    bun dev
-Installation Ollama
-Liste des modèles Ollama
-    ollama pull nom_du_model
-Installation du backend
-    git clone <url_depot> nom_dossier
-    cd nom_dossier
-    mv .env.example .env
-    bun install
-    bun dev
-Semis
-    # Create a user with admin privileges 
-    bun db:seed:admin
-    
-    # Generate a 100 fake users 
-    bun db:seed:users
-Contenu de l'interface utilisateur
-Accueil : démarrer un nouveau chat ou accéder aux anciens chat, grâce au tiroir
-Profil : modifier ses informations personnelles
-Contenu de l'interface administrateur
-Dashboard : listing des utilisateurs, pagination et barre de recherche
-Structure du backend
-    # ignore data if using mongo as Docker service
-    tree -I "node_modules" -I "data"
-    
+- Node.js (Version LTS récente)
+- Bun
+- MongoDB (BDD)
+- Ollama (pour les modèles de langage)
+
+## Installation
+
+### Frontend
+
+```bash
+git clone <url_depot> nom_dossier
+cd nom_dossier
+bun install
+bun dev
+```
+
+### Backend
+
+```bash
+git clone <url_depot> nom_dossier
+cd nom_dossier
+mv .env.example .env
+bun install
+bun dev
+```
+
+### MongoDB en tant que Service Docker (Optionnel)
+
+```yaml
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:7.0.11-ubi8
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: chatbot
+    restart: always
+```
+
+- **Démarrer le service** :
+
+  ```bash
+  docker-compose up
+  ```
+
+- **Arrêter le service** :
+
+  ```bash
+  docker-compose down
+  ```
+
+### Semis
+
+```bash
+# Créer un utilisateur avec des privilèges admin
+bun db:seed:admin
+
+# Générer 100 utilisateurs fictifs
+bun db:seed:users
+```
+
+## Contenu de l'Interface Utilisateur
+
+- **Accueil** : Démarrer un nouveau chat ou accéder aux anciens chats via le tiroir.
+- **Profil** : Modifier ses informations personnelles.
+
+## Contenu de l'Interface Administrateur
+
+- **Dashboard** : Listing des utilisateurs avec pagination et barre de recherche.
+
+## Structure du Backend
+
+```plaintext
 ├── README.md
 ├── bun.lockb
 ├── controllers
 │   ├── adminController.ts
 │   ├── authController.ts
-│   ├── chatContoller.ts
+│   ├── chatController.ts
 │   ├── ollamaController.ts
 │   └── userController.ts
 ├── database
@@ -73,7 +120,7 @@ Structure du backend
 ├── routes
 │   ├── adminRoutes.ts
 │   ├── authRoutes.ts
-│   ├── chatroutes.ts
+│   ├── chatRoutes.ts
 │   ├── ollamaRoutes.ts
 │   └── userRoutes.ts
 ├── startup.bat
@@ -91,74 +138,36 @@ Structure du backend
 ├── utils
 │   └── logger.ts
 └── validators
-    └── authvalidator.ts
-Points de terminaison backend
-[
-  {
-    path: "/api/v1/ollama/show-models",
-    methods: [ "GET" ],
-    middlewares: [ "showModels" ],
-  }, {
-    path: "/api/v1/auth/register",
-    methods: [ "POST" ],
-    middlewares: [ "register" ],
-  }, {
-    path: "/api/v1/auth/login",
-    methods: [ "POST" ],
-    middlewares: [ "login" ],
-  }, {
-    path: "/api/v1/auth/me",
-    methods: [ "GET" ],
-    middlewares: [ "authMiddleware", "me" ],
-  }, {
-    path: "/api/v1/user/username/update",
-    methods: [ "PUT" ],
-    middlewares: [ "authMiddleware", "updateUsername" ],
-  }, {
-    path: "/api/v1/user/password/update",
-    methods: [ "PUT" ],
-    middlewares: [ "authMiddleware", "updatePassword" ],
-  }, {
-    path: "/api/v1/user/thumbnail/update",
-    methods: [ "PUT" ],
-    middlewares: [ "authMiddleware", "multerMiddleware", "updateProfileThumbnail" ],
-  },
-  {
-    path: "/api/v1/chat",
-    methods: [ "POST" ],
-    middlewares: [ "authMiddleware", "chat" ],
-  }, {
-    path: "/api/v1/chat/history",
-    methods: [ "GET" ],
-    middlewares: [ "authMiddleware", "chatHistory" ],
-  }, {
-    path: "/api/v1/chat/last",
-    methods: [ "GET" ],
-    middlewares: [ "authMiddleware", "getLastChat" ],
-  }, {
-    path: "/api/v1/chat/delete/:id",
-    methods: [ "DELETE" ],
-    middlewares: [ "authMiddleware", "deleteChat" ],
-  }, {
-    path: "/api/v1/chat/:id",
-    methods: [ "GET" ],
-    middlewares: [ "authMiddleware", "chatById" ],
-  }, {
-    path: "/api/v1/admin/users",
-    methods: [ "GET" ],
-    middlewares: [ "authMiddleware", "adminMiddleware", "getUsersList" ],
-  }, {
-    path: "/api/v1/admin/users/:userId/delete",
-    methods: [ "DELETE" ],
-    middlewares: [ "authMiddleware", "adminMiddleware", "deleteUser" ],
-  }
-]
-Diagramme MongoDB
-texte alternatif
+    └── authValidator.ts
+```
 
-Structure Frontend
-tree -I "node_modules"
+## Points de Terminaison Backend
 
+| **Path**                     | **Methods** | **Middlewares**                         |
+|------------------------------|-------------|------------------------------------------|
+| `/api/v1/ollama/show-models` | GET         | showModels                               |
+| `/api/v1/auth/register`      | POST        | register                                 |
+| `/api/v1/auth/login`         | POST        | login                                    |
+| `/api/v1/auth/me`            | GET         | authMiddleware, me                       |
+| `/api/v1/user/username/update` | PUT         | authMiddleware, updateUsername           |
+| `/api/v1/user/password/update` | PUT         | authMiddleware, updatePassword           |
+| `/api/v1/user/thumbnail/update` | PUT       | authMiddleware, multerMiddleware, updateProfileThumbnail |
+| `/api/v1/chat`               | POST        | authMiddleware, chat                     |
+| `/api/v1/chat/history`       | GET         | authMiddleware, chatHistory              |
+| `/api/v1/chat/last`          | GET         | authMiddleware, getLastChat              |
+| `/api/v1/chat/delete/:id`    | DELETE      | authMiddleware, deleteChat               |
+| `/api/v1/chat/:id`           | GET         | authMiddleware, chatById                 |
+| `/api/v1/admin/users`        | GET         | authMiddleware, adminMiddleware, getUsersList |
+| `/api/v1/admin/users/:userId/delete` | DELETE  | authMiddleware, adminMiddleware, deleteUser |
+
+## Diagramme MongoDB
+
+![chatbot_simple_diagram](https://github.com/user-attachments/assets/8b58d845-6ddc-47fd-b46c-61e856338f8b)
+
+
+## Structure Frontend
+
+```plaintext
 ├── README.md
 ├── bun.lockb
 ├── index.html
@@ -203,12 +212,19 @@ tree -I "node_modules"
 ├── tsconfig.json
 ├── tsconfig.node.json
 └── vite.config.ts
-Points de terminaison frontaux
-[
-    {path : '/', component : Home, meta : {requiresAuth : true} },
-    {path : '/profile', component : Profile, meta : {requiresAuth : true} },
-    {path : '/login', component : Login,  meta : {requiresGuest : true} },
-    {path : '/register', component : Register,  meta : {requiresGuest : true} },
-    {path : '/chat/:id', component : Home,  meta : {requiresAuth : true}, name : "chat" },
-    {path : '/admin/dashboard', component : Dashboard,  meta : {requiresAdmin : true} },
-]
+```
+
+## Points de Terminaison Frontend
+
+| **Path**                     | **Component**  | **Meta**                     |
+|------------------------------|----------------|------------------------------|
+| `/`                          | Home           | requiresAuth: true           |
+| `/profile`                   | Profile        | requiresAuth: true           |
+| `/login`                     | Login          | requiresGuest: true          |
+| `/register`                  | Register       | requiresGuest: true          |
+| `/chat/:id`                  | Home           | requiresAuth: true, name: "chat" |
+| `/admin/dashboard`           | Dashboard      | requiresAdmin: true          |
+
+---
+
+Cette version est structurée pour une meilleure lisibilité et compréhension. Vous pouvez l'adapter davantage selon vos besoins spécifiques.
