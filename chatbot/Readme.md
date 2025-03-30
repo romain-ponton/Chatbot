@@ -1,3 +1,5 @@
+Documentation technique pour l'application Chabotsio
+
 Introduction
 
 Chabotsio est une application web de chatbot qui peut être exécutée localement sur votre machine. Elle utilise des modèles de langage fournis par Ollama pour générer des réponses. L'application est construite avec Express et Bun pour le backend, Vue.js pour le frontend et MongoDB comme base de données.
@@ -17,38 +19,13 @@ Installation frontale
     bun dev
 Installation Ollama
 Liste des modèles Ollama
-    # Télécharge un modèle de langage depuis le référentiel d'Ollama et l'enregistre localement sur la machine
-    ollama pull <nom_du_model>
-
-    # Liste les modèles disponible
-    ollama list
-
-    # Supprimer un modèle
-    ollama rm <nom_du_model>
+    ollama pull nom_du_model
 Installation du backend
-
     git clone <url_depot> nom_dossier
     cd nom_dossier
     mv .env.example .env
     bun install
     bun dev
-MONGODB AS DOCKER SERVICE (optionnelle)
-    services:
-  mongodb:
-    image: mongodb/mongodb-community-server:7.0.11-ubi8
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./data:/data/db
-    environment:
-      MONGO_INITDB_DATABASE: chatbot
-      
-    restart: always
-    # Run the service
-    docker-compose up
-    # Stop the service
-    docker-compose down
 Semis
     # Create a user with admin privileges 
     bun db:seed:admin
